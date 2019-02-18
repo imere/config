@@ -1,0 +1,131 @@
+sudo: false
+
+language: android
+
+android:
+  components:
+    # Uncomment the lines below if you want to
+    # use the latest revision of Android SDK Tools
+    # Accepted values are: [add-on, doc, extra, platform, platform-tool, sample, source, system-image, tool]
+    - tools
+    - platform-tools
+
+    # Specify at least one system image,
+    # if you need to run emulator(s) during your tests
+
+    # List of Android SDK components that can be specified in .travis.yml
+    # - addon-google_apis-google-24
+    # - addon-google
+    # - addon-google_gdk-google-19
+    # - addon-googlegoogle-m2repository
+    # - extra-google-market_apk_expansion
+    # - extra-google-market_licensing
+    # - extra-google-play_billing
+    # - extra-google-simulators
+    # - extra-google-webdriver
+    # - addon-google_tv_addon-google-13
+    - source-25
+    # - source-26
+    # - source-27
+    # - source-28
+    # - sys-img-arm64-v8a-android-24
+    # - sys-img-arm64-v8a-google_apis-25
+    # - sys-img-armeabi-v7a-android-tv-23
+    # - sys-img-armeabi-v7a-android-wear-25
+    - sys-img-armeabi-v7a-google_apis-25
+    # - sys-img-mips-android-17
+    # - sys-img-x86-android-tv-26
+    # - sys-img-x86-android-wear-26
+    # - sys-img-x86-android-25
+    # - sys-img-x86-android-26
+    # - sys-img-x86-android-27
+    # - sys-img-x86-android-28
+    # - sys-img-x86-google_apis-26
+    # - sys-img-x86-google_apis_playstore-26
+    # - sys-img-x86_64-google_apis-25
+    # - sys-img-x86_64-google_apis-26
+    # - sys-img-x86_64-google_apis-27
+    # - sys-img-x86_64-google_apis-28
+
+    # The BuildTools version used by your project
+    - build-tools-25.0.0
+    - build-tools-26.0.1
+    - build-tools-27.0.3
+    - build-tools-28.0.3
+
+    # The SDK version used to compile your project
+    - android-25
+    # - android-26
+    # - android-27
+    # - android-28
+
+    # Additional components
+    - extra-google-google_play_services
+    - extra-google-m2repository
+    - extra-android-m2repository
+
+    - add-on
+    - extra
+
+env:
+  global:
+    - ANDROID_HOME=/usr/local/android-sdk
+    - ANDROID_SDK_ROOT=/usr/local/android-sdk
+    - ANDROID_AVD_HOME=${HOME}/.android/avd
+
+    - ANDROID_TARGET=android-25
+    - ANDROID_ABI=armeabi-v7a
+
+before_cache:
+  - rm -f  ${HOME}/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr ${HOME}/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - ${HOME}/.gradle/caches/
+    - ${HOME}/.gradle/wrapper/
+    - ${HOME}/.android/build-cache
+
+before_install:
+  - chmod +x gradlew
+
+  - touch ~/.android/repositories.cfg
+  - yes | sdkmanager --update --sdk_root=$ANDROID_SDK_ROOT
+  # set .../emulator before .../tools
+  - export PATH="${ANDROID_HOME}/emulator:$PATH"
+
+before_script:
+  - ls -aF $HOME
+  - which android
+  - which avdmanager
+  - which sdkmanager
+  - which emulator
+  - avdmanager list
+  - sdkmanager --list
+
+  - yes | sdkmanager --sdk_root=$ANDROID_SDK_ROOT "system-images;${ANDROID_TARGET};google_apis;${ANDROID_ABI}"
+  # Emulator Management: Create, Start and Wait
+  - echo no | avdmanager create avd -f -n test -c 500M -k "system-images;${ANDROID_TARGET};google_apis;${ANDROID_ABI}"
+  - emulator -avd test -no-audio -no-window &
+  - android-wait-for-emulator
+  - adb wait-for-device
+  - until [[ "`adb shell getprop init.svc.bootanim`" =~ "stopped" ]] ; do sleep 1; done
+  - while [ "`adb shell getprop sys.boot_completed | tr -d '\r' `" != "1" ] ; do sleep 1; done
+  - sleep 5s
+  - adb shell input keyevent 82 &
+
+script:
+  - ./gradlew clean
+  # generate for all varients
+  - ./gradlew assemble
+  - chmod -R 777 .
+  # unit test
+  - ./gradlew test
+
+  # Unable to install .../app/build/outputs/apk/debug/app-debug.apk
+  # com.android.ddmlib.InstallException
+  #
+  # com.android.builder.testing.ConnectedDevice > runTests[test(AVD) - 7.1.1] FAILED
+  # com.android.builder.testing.api.DeviceException: com.android.ddmlib.InstallException
+  # instrument test
+  # - ./gradlew connectedAndroidTest
