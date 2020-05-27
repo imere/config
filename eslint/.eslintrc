@@ -1,0 +1,94 @@
+/* See all the pre-defined configs here: https://www.npmjs.com/package/eslint-config-defaults */
+{
+	// "extends": "defaults/configurations/eslint",
+	// "parser": "babel-eslint",
+	"ecmaFeatures": {
+		"jsx": true
+	},
+	"plugins": [],
+	// "extends": "eslint:recommended",
+	"env": {
+		"commonjs": true,
+		"amd": true,
+		"es6": true,
+		"node": true,
+		"browser": true,
+		"serviceworker": true,
+		"jasmine": true,
+		"jest": true,
+		"mocha": true,
+		"worker": true,
+		"shared-node-browser": true
+	},
+	"parserOptions": {
+		"sourceType": "module",
+		"ecmaVersion": 2020
+	},
+	"rules": {
+		"accessor-pairs": "warn",
+		"array-callback-return": "warn",
+		"arrow-body-style": "error",
+		"array-bracket-newline": "warn",
+		"arrow-parens": "error",
+		"arrow-spacing": "error",
+		"block-scoped-var": "error",
+		"block-spacing": "error",
+		"brace-style": "error",
+		"callback-return": "warn",
+		"comma-style": "error",
+		"complexity": "error",
+		"computed-property-spacing": "error",
+		"constructor-super": "error",
+		"curly": "error",
+		"default-case": "error",
+		"dot-location": "warn",
+		"dot-notation": "warn",
+		"eol-last": "error",
+		"eqeqeq": "warn",
+		"quotes": [
+			"error",
+			"single"
+		],
+		"indent": [
+			"error",
+			2
+		],
+		"jsx-quotes": "error",
+		"keyword-spacing": "error",
+		"new-parens": "error",
+		"no-dupe-args": "error",
+		"no-dupe-class-members": "error",
+		"no-dupe-keys": "error",
+		"no-duplicate-case": "error",
+		"no-duplicate-imports": "error",
+		"object-curly-newline": "error",
+		"object-curly-spacing": [
+			"error",
+			"always"
+		],
+		"quote-props": [
+			"warn",
+			"as-needed"
+		],
+		"space-before-blocks": "error",
+		"space-unary-ops": "error",
+		"comma-dangle": 1,
+		"comma-spacing": "error",
+		"no-debugger": 1,
+		"no-extra-semi": 1,
+		"no-extra-parens": 1,
+		"no-irregular-whitespace": 0,
+		"no-mixed-spaces-and-tabs": "error",
+		"no-undef": 0,
+		"no-unused-vars": 0,
+		"semi": 1,
+		"semi-spacing": 1,
+		"space-infix-ops": "error",
+		"spaced-comment": "error",
+		"space-in-parens": "error",
+		"unicode-bom": [
+			"error",
+			"never"
+		]
+	}
+}
